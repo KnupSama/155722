@@ -1,0 +1,20 @@
+
+const dateMaker = (date: Date) => ({
+    date: date,
+    addDays: (count: number) => dateMaker(new Date(date.getTime() + 1000 * 60 * 60 * 24 * count)),
+    addWeeks: (count: number) => dateMaker(new Date(date.getTime() + 1000 * 60 * 60 * 24 * 7 * count)),
+    getAfter: (dateToComp: Date) => date.getTime() < dateToComp.getTime() ? dateMaker(dateToComp) : dateMaker(date),
+    getBefore: (dateToComp: Date) => date.getTime() < dateToComp.getTime() ? dateMaker(date) : dateMaker(dateToComp),
+    console: (text: string | null = null) => { console.log(text + " - " + date.toISOString()); return dateMaker(date) },
+    getDate: () => date
+})
+
+dateMaker(new Date())
+    .addDays(5)
+    .console("After add 5 days")
+    .addDays(-5)
+    .console("After sub 5 days")
+    .addWeeks(4)
+    .console("After add 4 weeks")
+    .getAfter(new Date(2021, 10, 10))
+    .console("After get bigger")
