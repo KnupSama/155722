@@ -1,0 +1,31 @@
+interface StorageItem {
+    name: string,
+    type: string,
+    count: number
+}
+
+const storageHelper = (storage: Array<StorageItem>) => ({
+    storage: storage,
+    add: (item: StorageItem) => { 
+        const foundItem = storage.find(x=>x.name == item.name); 
+        if(foundItem) foundItem.count++; else storage.push(item); 
+        return storageHelper(storage)
+    },
+    getByField: (type: "name" | "type" | "count", value: any) => storageHelper(storage.filter(x => x[type] == value)),
+    remove: (name: string) => {const ind = storage.findIndex(x=>x.name == name); if(ind != -1) storage.splice(ind, 1); return storageHelper(storage)},
+    filtrBy: (fn: (x: StorageItem) => any) => storageHelper(storage.filter(fn)),
+    sortByCount: () => storageHelper(storage.sort((a,b) => a.count - b.count))
+})
+
+console.log(
+storageHelper([
+    {name: 'Profil aluminiowy 20x2', type: 'metal', count: 1}, 
+    {name: 'Profil aluminiowy 40x2', type: 'metal', count: 1}, 
+    {name: 'Zbiornik HDPE', type: 'HDPE', count: 1}, 
+    {name: 'Mauzer 500L', type: 'HDPE + Metal', count: 1}])
+    .add({name: 'Mauzer 1500L', type: 'HDPE + Metal', count: 1})
+    .add({name: 'Mauzer 1500L', type: 'HDPE + Metal', count: 1})
+    .remove('Profil aluminiowy 20x2')
+    .remove('remove error test') // for testing
+    .sortByCount()
+    .filtrBy(x=>x.type == 'HDPE').storage)
